@@ -1,0 +1,7 @@
+# Nix build outputs
+result
+result-*
+
+# Editor junk
+*.swp
+*~
