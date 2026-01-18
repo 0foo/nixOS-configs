@@ -104,8 +104,11 @@
 
   virtualisation.docker.enable = true;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  services.tailscale.enable = true;
 
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;   # opens UDP 41641
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -133,4 +136,9 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.11"; # Did you read the comment?
+
+
+  # 9000 9443 are portainer
+  networking.firewall.allowedTCPPorts = [ 9000 9443 ];
+
 }
