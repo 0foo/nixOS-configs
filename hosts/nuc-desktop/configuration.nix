@@ -168,7 +168,6 @@
   systemd.targets.suspend.enable = false;
   systemd.targets.hibernate.enable = false;
   systemd.targets.hybrid-sleep.enable = false;
-  services.logind.extraConfig = null; # ensure you’re not using the deprecated option
 
 
   services.gnome.core-utilities.enable = true;
