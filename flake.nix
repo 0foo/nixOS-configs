@@ -32,9 +32,7 @@
   {
     nixosConfigurations = {
       xps13 = mkHost "xps13";
-
-      # Enable these once you add the two required files to each host folder:
-      # nuc-desktop = mkHost "nuc-desktop";
+      nuc-desktop = mkHost "nuc-desktop";
       # work-2023-laptop = mkHost "work-2023-laptop";
     };
   };
