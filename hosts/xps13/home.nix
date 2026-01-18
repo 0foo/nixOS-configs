@@ -16,7 +16,6 @@
     google-chrome
     spotify
     monero-cli
-
   ];
 
   # If you want HM to manage Firefox profile settings later, you can enable this.
