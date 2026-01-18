@@ -82,26 +82,32 @@
   users.users.nick = {
     isNormalUser = true;
     description = "nick";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker"];
     packages = with pkgs; [
     #  thunderbird
     ];
   };
 
-  # Install firefox.
-  programs.firefox.enable = true;
-
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
+  programs.firefox.enable = false;
+
+  nixpkgs.config.allowUnfree = true;
+
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
-	git
-	ansible
+    git
+    tree
+    xwayland
+    xwayland-run
+    tcpdump
+    rclone
+    ansible
+    home-manager
   ];
+
+  virtualisation.docker.enable = true;
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
