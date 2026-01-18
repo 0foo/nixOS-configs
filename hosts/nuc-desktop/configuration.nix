@@ -93,13 +93,9 @@
 
   programs.firefox.enable = false;
 
-  nixpkgs.config.allowUnfree = true;
-
   environment.systemPackages = with pkgs; [
     git
     tree
-    xwayland
-    xwayland-run
     tcpdump
     rclone
     ansible
@@ -135,6 +131,4 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.11"; # Did you read the comment?
-#  services.resolved.enable = true;
-#  services.resolved.fallbackDns = ["1.1.1.1" "8.8.8.8"];
 }
