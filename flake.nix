@@ -13,22 +13,29 @@
   outputs = { self, nixpkgs, home-manager, ... }:
   let
     system = "x86_64-linux";
-  in
-  {
-    nixosConfigurations.xps13 = nixpkgs.lib.nixosSystem {
+
+    mkHost = hostName: nixpkgs.lib.nixosSystem {
       inherit system;
       modules = [
-        ./hosts/xps13/configuration.nix
-        ./hosts/xps13/hardware-configuration.nix
+        ./hosts/${hostName}/configuration.nix
+        ./hosts/${hostName}/hardware-configuration.nix
 
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-
-          home-manager.users.nick = import ./hosts/xps13/home.nix;
+          home-manager.users.nick = import ./home/nick.nix;
         }
       ];
+    };
+  in
+  {
+    nixosConfigurations = {
+      xps13 = mkHost "xps13";
+
+      # Enable these once you add the two required files to each host folder:
+      # nuc-desktop = mkHost "nuc-desktop";
+      # work-2023-laptop = mkHost "work-2023-laptop";
     };
   };
 }
