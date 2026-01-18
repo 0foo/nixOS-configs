@@ -139,6 +139,7 @@
 
 
   # 9000 9443 are portainer
-  networking.firewall.allowedTCPPorts = [ 9000 9443 ];
+  # 2283 is immich
+  networking.firewall.allowedTCPPorts = [ 9000 9443 2283 ];
 
 }
