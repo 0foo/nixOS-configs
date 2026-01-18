@@ -87,4 +87,6 @@
     daemon.enable = true;
     updater.enable = true;
   };
+  
+  services.tailscale.enable = true;
 }
