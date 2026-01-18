@@ -143,19 +143,27 @@
   networking.firewall.allowedTCPPorts = [ 9000 9443 2283 ];
 
 
-  # Keep awake logic
+
   services.logind = {
     lidSwitch = "ignore";
     lidSwitchDocked = "ignore";
     lidSwitchExternalPower = "ignore";
-    extraConfig = ''
-      IdleAction=ignore
-    '';
+
+    settings = {
+      Login = {
+        IdleAction = "ignore";
+        # optional: also ensure no idle timeout is set
+        IdleActionSec = "0";
+      };
+    };
   };
+
   systemd.targets.sleep.enable = false;
   systemd.targets.suspend.enable = false;
   systemd.targets.hibernate.enable = false;
   systemd.targets.hybrid-sleep.enable = false;
+
+
 
   services.gnome.core-utilities.enable = true;
 
