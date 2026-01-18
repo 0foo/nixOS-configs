@@ -154,6 +154,12 @@
         IdleAction = "ignore";
         # optional: also ensure no idle timeout is set
         IdleActionSec = "0";
+        HandlePowerKey = "ignore";
+        HandleSuspendKey = "ignore";
+        HandleHibernateKey = "ignore";
+        HandleLidSwitch = "ignore";
+        HandleLidSwitchDocked = "ignore";
+        HandleLidSwitchExternalPower = "ignore";
       };
     };
   };
@@ -163,19 +169,6 @@
   systemd.targets.hibernate.enable = false;
   systemd.targets.hybrid-sleep.enable = false;
   services.logind.extraConfig = null; # ensure you’re not using the deprecated option
-
-  services.logind.settings = {
-    Login = {
-      HandlePowerKey = "ignore";
-      HandleSuspendKey = "ignore";
-      HandleHibernateKey = "ignore";
-      HandleLidSwitch = "ignore";
-      HandleLidSwitchDocked = "ignore";
-      HandleLidSwitchExternalPower = "ignore";
-      IdleAction = "ignore";
-      IdleActionSec = "0";
-    };
-  };
 
 
   services.gnome.core-utilities.enable = true;
