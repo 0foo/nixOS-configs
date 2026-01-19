@@ -74,6 +74,8 @@
     home-manager
   ];
 
+  services.transmission.enable = true;
+
   system.stateVersion = "25.11";
 
   virtualisation.docker.enable = true;
