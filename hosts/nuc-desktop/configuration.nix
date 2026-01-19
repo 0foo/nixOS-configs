@@ -47,7 +47,7 @@
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
+  services.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
@@ -172,5 +172,24 @@
     GSETTINGS_BACKEND = "dconf";
   };
   ###### END DISABLE SLEEP ##############
+
+  ###### SYNCTHING ########
+  users.groups.syncthing = {};
+
+  # idempotently create/configure these dirs for syncthing
+  systemd.tmpfiles.rules = [
+    "d /syncthing 0755 root root -"
+    "d /syncthing/data 0750 syncthing syncthing -"
+    "d /syncthing/config 0750 syncthing syncthing -"
+  ];
+
+  services.syncthing = {
+    enable = true;
+    user = "syncthing";
+    group = "syncthing";
+    dataDir = "/syncthing/data";
+    configDir = "/syncthing/config";
+    openDefaultPorts = true; # 22000 TCP/UDP + 21027 UDP
+  };
 
 }
