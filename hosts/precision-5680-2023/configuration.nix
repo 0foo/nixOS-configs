@@ -107,7 +107,6 @@ environment.sessionVariables.LC_TIME = "en_US.UTF-8";
   environment.systemPackages = with pkgs; [
 	parted
 	lsof
-	git
 	vscode
 	jetbrains.idea-ultimate
 	jetbrains.datagrip
@@ -115,7 +114,6 @@ environment.sessionVariables.LC_TIME = "en_US.UTF-8";
 	openconnect
 	spotify
 	htop
-	google-chrome
 	gthumb
 	teams-for-linux
   	zoom-us

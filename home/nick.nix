@@ -12,7 +12,6 @@
     firefox
     git
     vscode
-    jetbrains.idea-ultimate
     google-chrome
     spotify
     monero-cli
