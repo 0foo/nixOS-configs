@@ -33,7 +33,7 @@
     nixosConfigurations = {
       xps13 = mkHost "xps13";
       nuc-desktop = mkHost "nuc-desktop";
-      # work-2023-laptop = mkHost "work-2023-laptop";
+      precision-5680-2023 = mkHost "precision-5680-2023";
     };
   };
 }
