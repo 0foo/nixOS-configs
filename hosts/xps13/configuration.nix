@@ -72,6 +72,7 @@
     rclone
     ansible
     home-manager
+    transmission_4-gtk
   ];
 
   services.transmission.enable = true;
