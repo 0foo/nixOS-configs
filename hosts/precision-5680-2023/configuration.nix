@@ -123,9 +123,10 @@ environment.sessionVariables.LC_TIME = "en_US.UTF-8";
     	gnome-system-monitor
 	ansible
 	nettools
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+	transmission_4-gtk
   ];
+  services.transmission.enable = true;
+  services.tailscale.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

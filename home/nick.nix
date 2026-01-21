@@ -18,6 +18,7 @@
     vlc
   ];
 
+
   # If you want HM to manage Firefox profile settings later, you can enable this.
   # Otherwise, it’s fine to just install firefox via home.packages.
   # programs.firefox.enable = true;
