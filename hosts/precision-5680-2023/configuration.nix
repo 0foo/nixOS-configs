@@ -95,7 +95,13 @@ environment.sessionVariables.LC_TIME = "en_US.UTF-8";
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  virtualisation.docker.enable = true;
+virtualisation.docker = {
+  enable = true;
+
+  daemon.settings = {
+    "insecure-registries" = [ "nuc-desktop:5000" ];
+  };
+};
  
   services.clamav={
 	daemon.enable = true;

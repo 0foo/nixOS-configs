@@ -15,6 +15,7 @@
     google-chrome
     spotify
     monero-cli
+    pkgs.nodejs_22
     vlc
   ];
 
