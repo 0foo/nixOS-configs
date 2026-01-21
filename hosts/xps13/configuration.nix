@@ -73,6 +73,7 @@
     ansible
     home-manager
     transmission_4-gtk
+    net-tools
   ];
 
   services.transmission.enable = true;

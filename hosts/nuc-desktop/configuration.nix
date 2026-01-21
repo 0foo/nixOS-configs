@@ -78,14 +78,24 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
+  users.groups.data = {
+      members = [ "nick" "data" ];
+  };
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.nick = {
     isNormalUser = true;
     description = "nick";
-    extraGroups = [ "networkmanager" "wheel" "docker"];
-    packages = with pkgs; [
-    #  thunderbird
-    ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "data" ];
+  };
+
+  users.users.data = {
+    isNormalUser = true;
+    description = "Data owner account";
+    group = "data";
+    extraGroups = [ "data" ];
+    home = "/var/lib/data";
+    createHome = true;
   };
 
   # Allow unfree packages
@@ -100,6 +110,7 @@
     rclone
     ansible
     home-manager
+    net-tools
   ];
 
   virtualisation.docker.enable = true;
@@ -140,7 +151,7 @@
 
   # 9000 9443 are portainer
   # 2283 is immich
-  networking.firewall.allowedTCPPorts = [ 9000 9443 2283 ];
+  networking.firewall.allowedTCPPorts = [ 9000 9443 2283 80];
 
 
   ##### DISABLE SLEEP
@@ -171,25 +182,51 @@
   environment.variables = {
     GSETTINGS_BACKEND = "dconf";
   };
+ services.openssh = {
+    enable = true;
+
+    # Recommended hardening
+    settings = {
+      PasswordAuthentication = false;  # use SSH keys
+      KbdInteractiveAuthentication = false;
+      PermitRootLogin = "no";
+    };
+  };
+
   ###### END DISABLE SLEEP ##############
 
-  ###### SYNCTHING ########
-  users.groups.syncthing = {};
+  # systemd.services.rclone-gdrive-to-data = {
+  #     description = "Rclone: copy gdrive: to /data";
+  #     after = [ "network-online.target" ];
+  #     wants = [ "network-online.target" ];
 
-  # idempotently create/configure these dirs for syncthing
-  systemd.tmpfiles.rules = [
-    "d /syncthing 0755 root root -"
-    "d /syncthing/data 0750 syncthing syncthing -"
-    "d /syncthing/config 0750 syncthing syncthing -"
-  ];
+  #     serviceConfig = {
+  #       Type = "oneshot";
 
-  services.syncthing = {
-    enable = true;
-    user = "syncthing";
-    group = "syncthing";
-    dataDir = "/syncthing/data";
-    configDir = "/syncthing/config";
-    openDefaultPorts = true; # 22000 TCP/UDP + 21027 UDP
-  };
+  #       User = "nick";
+  #       Group = "data";
+
+  #       ExecStart = ''
+  #         ${pkgs.rclone}/bin/rclone copy gdrive: /data \
+  #           --create-empty-src-dirs \
+  #           --fast-list \
+  #           --transfers 4 \
+  #           --checkers 8 \
+  #           --log-level INFO \
+  #           --log-file /var/log/rclone-gdrive-to-data.log
+  #       '';
+  #     };
+  #   };
+
+  #   systemd.timers.rclone-gdrive-to-data = {
+  #     description = "Timer: rclone copy gdrive: to /data";
+  #     wantedBy = [ "timers.target" ];
+  #     timerConfig = {
+  #       OnCalendar = "hourly";
+  #       Persistent = true;
+  #       RandomizedDelaySec = "5m";
+  #       Unit = "rclone-gdrive-to-data.service";
+  #     };
+  #   };
 
 }
