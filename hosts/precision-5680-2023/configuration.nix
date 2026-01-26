@@ -23,6 +23,10 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+  
+  services.resolved.enable = true;
+  networking.useHostResolvConf = false;
+  networking.networkmanager.dns = "systemd-resolved";
 
   # Set your time zone.
   time.timeZone = "America/Chicago";
@@ -101,14 +105,7 @@ virtualisation.docker = {
   };
 };
  
-  services.clamav={
-	daemon.enable = true;
-        updater.enable = true;
- };
 
-services.resolved.enable = true;
-networking.networkmanager.dns = "systemd-resolved";
-networking.useHostResolvConf = false;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -137,9 +134,13 @@ networking.useHostResolvConf = false;
   	openconnect
   	openconnect_openssl
   	gpclient
+	(pkgs.writeShellScriptBin "vpn-on"
+        (builtins.readFile ./files/openconnect/vpn-on))
+        (pkgs.writeShellScriptBin "vpn-off"
+        (builtins.readFile ./files/openconnect/vpn-off))
   ];
   services.transmission.enable = true;
-  services.tailscale.enable = true;
+  services.tailscale.enable = false;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -220,5 +221,26 @@ nix.settings.experimental-features = [ "nix-command" "flakes" ];
 ## enable kvm
 virtualisation.libvirtd.enable = true;
 programs.virt-manager.enable = true;
+
+
+## Tulane VPN files 
+  environment.etc."openconnect/hipreport.sh" = {
+    source = ./files/openconnect/hipreport.sh;
+    mode = "0755";
+  };
+
+  environment.etc."openconnect/vpn-on" = {
+    source = ./files/openconnect/vpn-on;
+    mode = "0755";
+  };
+
+  environment.etc."openconnect/vpn-off" = {
+    source = ./files/openconnect/vpn-off;
+    mode = "0755";
+  };
+
+
+
+
 
 }

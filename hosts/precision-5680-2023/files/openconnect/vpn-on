@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+sudo -E gpclient connect vpn.tulane.edu --browser firefox --csd-wrapper /etc/openconnect/hipreport.sh

@@ -11,7 +11,6 @@
   home.packages = with pkgs; [
     git
     vscode
-    google-chrome
     spotify
     monero-cli
     pkgs.nodejs_22
