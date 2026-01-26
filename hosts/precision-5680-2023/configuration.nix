@@ -42,7 +42,7 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-environment.sessionVariables.LC_TIME = "en_US.UTF-8";
+  environment.sessionVariables.LC_TIME = "en_US.UTF-8";
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -83,14 +83,12 @@ environment.sessionVariables.LC_TIME = "en_US.UTF-8";
   users.users.nick = {
     isNormalUser = true;
     description = "nick";
-    extraGroups = [ "networkmanager" "wheel" "docker"];
+    extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd" "kvm" ];
     packages = with pkgs; [
     #  thunderbird
     ];
   };
 
-  # Install firefox.
-  programs.firefox.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -107,6 +105,10 @@ virtualisation.docker = {
 	daemon.enable = true;
         updater.enable = true;
  };
+
+services.resolved.enable = true;
+networking.networkmanager.dns = "systemd-resolved";
+networking.useHostResolvConf = false;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -130,6 +132,11 @@ virtualisation.docker = {
 	ansible
 	nettools
 	transmission_4-gtk
+	virt-manager
+  	virt-viewer
+  	openconnect
+  	openconnect_openssl
+  	gpclient
   ];
   services.transmission.enable = true;
   services.tailscale.enable = true;
@@ -209,4 +216,9 @@ nix.settings.experimental-features = [ "nix-command" "flakes" ];
       ExecStart = "/run/current-system/sw/bin/gsettings set org.gnome.desktop.interface clock-format '12h'";
     };
   };
+
+## enable kvm
+virtualisation.libvirtd.enable = true;
+programs.virt-manager.enable = true;
+
 }

@@ -9,7 +9,6 @@
 
   # Put “user apps” here (what you previously had in environment.systemPackages).
   home.packages = with pkgs; [
-    firefox
     git
     vscode
     google-chrome
@@ -17,6 +16,10 @@
     monero-cli
     pkgs.nodejs_22
     vlc
+    gnome-extension-manager
+    gnomeExtensions.appindicator
+    gnomeExtensions.dash-to-dock
+    curl
   ];
 
 
@@ -25,7 +28,7 @@
   # programs.firefox.enable = true;
 
   programs.home-manager.enable = true;
-
+  programs.firefox.enable = true;
 
   # Hide the duplicate AppStream desktop ID GNOME sometimes surfaces
   xdg.dataFile."applications/com.google.Chrome.desktop".text = ''
