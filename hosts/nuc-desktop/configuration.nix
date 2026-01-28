@@ -87,6 +87,10 @@
     isNormalUser = true;
     description = "nick";
     extraGroups = [ "networkmanager" "wheel" "docker" "data" ];
+    openssh.authorizedKeys.keys = [
+	"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP0BBVKhFXsgGVjUGaxNjLNMiARvGV8SW3davx3I1vEb 0foo@xps13"
+    ];
+	
   };
 
   users.users.data = {
@@ -111,6 +115,7 @@
     ansible
     home-manager
     net-tools
+    htop
   ];
 
   virtualisation.docker.enable = true;
@@ -151,7 +156,7 @@
 
   # 9000 9443 are portainer
   # 2283 is immich
-  networking.firewall.allowedTCPPorts = [ 9000 9443 2283 80];
+  networking.firewall.allowedTCPPorts = [ 9000 9443 2283 80 22 ];
 
 
   ##### DISABLE SLEEP
@@ -189,7 +194,7 @@
     settings = {
       PasswordAuthentication = false;  # use SSH keys
       KbdInteractiveAuthentication = false;
-      PermitRootLogin = "no";
+      PermitRootLogin = "yes";
     };
   };
 
