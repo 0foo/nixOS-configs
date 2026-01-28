@@ -240,7 +240,7 @@ programs.virt-manager.enable = true;
   };
 
 
-
+  services.avahi.enable = false;
 
 
 }

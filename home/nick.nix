@@ -19,6 +19,7 @@
     gnomeExtensions.appindicator
     gnomeExtensions.dash-to-dock
     curl
+    ghostty
   ];
 
 
