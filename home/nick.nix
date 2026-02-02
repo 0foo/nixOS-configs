@@ -20,7 +20,7 @@
     gnomeExtensions.dash-to-dock
     curl
     ghostty
-    transmission_4
+    transmission_4-gtk
   ];
 
 
