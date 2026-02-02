@@ -50,6 +50,8 @@
   # Enable the GNOME Desktop Environment.
   services.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.displayManager.gdm.wayland = true;
+
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -117,7 +119,10 @@
     home-manager
     net-tools
     htop
-  ];
+    freerdp
+    openssl
+    gnome-remote-desktop  
+];
 
 
 
@@ -162,7 +167,7 @@
   networking.firewall.allowedTCPPorts = [ 9000 9443 2283 80 22 ];
 
 
-  ##### DISABLE SLEEP
+  #-------------------------DISABLE SLEEP ---------------------------------------
   services.logind = {
     lidSwitch = "ignore";
     lidSwitchDocked = "ignore";
@@ -190,6 +195,8 @@
   environment.variables = {
     GSETTINGS_BACKEND = "dconf";
   };
+  #------------------------ END DISABLE SLEEP SECTION -------------------------------------
+ 
  services.openssh = {
     enable = true;
 
@@ -200,42 +207,5 @@
       PermitRootLogin = "yes";
     };
   };
-
-
-  ###### END DISABLE SLEEP ##############
-
-  # systemd.services.rclone-gdrive-to-data = {
-  #     description = "Rclone: copy gdrive: to /data";
-  #     after = [ "network-online.target" ];
-  #     wants = [ "network-online.target" ];
-
-  #     serviceConfig = {
-  #       Type = "oneshot";
-
-  #       User = "nick";
-  #       Group = "data";
-
-  #       ExecStart = ''
-  #         ${pkgs.rclone}/bin/rclone copy gdrive: /data \
-  #           --create-empty-src-dirs \
-  #           --fast-list \
-  #           --transfers 4 \
-  #           --checkers 8 \
-  #           --log-level INFO \
-  #           --log-file /var/log/rclone-gdrive-to-data.log
-  #       '';
-  #     };
-  #   };
-
-  #   systemd.timers.rclone-gdrive-to-data = {
-  #     description = "Timer: rclone copy gdrive: to /data";
-  #     wantedBy = [ "timers.target" ];
-  #     timerConfig = {
-  #       OnCalendar = "hourly";
-  #       Persistent = true;
-  #       RandomizedDelaySec = "5m";
-  #       Unit = "rclone-gdrive-to-data.service";
-  #     };
-  #   };
 
 }
