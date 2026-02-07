@@ -105,18 +105,8 @@ services.syncthing = {
 
   openDefaultPorts = true;
 
-  settings = {
-    gui.address = "127.0.0.1:8384";
-
-    options = {
-      localAnnounceEnabled = true;   # LAN
-      natEnabled = false;
-      relaysEnabled = false;
-      globalAnnounceEnabled = false;
-      stunEnabled = false;
-    };
-  };
+  # set GUI bind without triggering the merge helper
+  guiAddress = "127.0.0.1:8384";
 };
-
 
 }

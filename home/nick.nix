@@ -23,6 +23,7 @@
     transmission_4-gtk
     wget
     libreoffice
+    python3
   ];
 
 
