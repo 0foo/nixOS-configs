@@ -89,7 +89,7 @@
   users.users.nick = {
     isNormalUser = true;
     description = "nick";
-    extraGroups = [ "networkmanager" "wheel" "docker" "data" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "data" "libvertd" "kvm" ];
     openssh.authorizedKeys.keys = [
 	"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP0BBVKhFXsgGVjUGaxNjLNMiARvGV8SW3davx3I1vEb 0foo@xps13"
     ];
@@ -122,6 +122,7 @@
     freerdp
     openssl
     gnome-remote-desktop  
+    google-chrome
 ];
 
 
@@ -208,4 +209,39 @@
     };
   };
 
+  virtualisation.libvirtd.enable = true;
+  virtualisation.spiceUSBRedirection.enable = true;
+
+  programs.virt-manager.enable = true;
+
+
+services.syncthing = {
+  enable = true;
+  user = "data";
+  group = "data";
+
+  dataDir = "/data/syncthing";
+  configDir = "/data/syncthing/.config/syncthing";
+
+  openDefaultPorts = true;
+
+  settings = {
+    gui = {
+      address = "127.0.0.1:8384";
+    };
+
+    options = {
+      # Allow LAN discovery
+      localAnnounceEnabled = true;
+
+      # Allow direct connections (LAN + Tailscale)
+      natEnabled = false;          # no UPnP / NAT-PMP
+      relaysEnabled = false;       # no public relays
+      globalAnnounceEnabled = false;
+
+      # Tailscale doesn't need STUN
+      stunEnabled = false;
+    };
+  };
+};
 }

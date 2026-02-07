@@ -21,6 +21,7 @@
     curl
     ghostty
     transmission_4-gtk
+    wget
   ];
 
 
