@@ -93,4 +93,30 @@
   };
   
   services.tailscale.enable = true;
+
+services.syncthing = {
+  enable = true;
+
+  user = "nick";
+  group = "users";
+
+  dataDir = "/home/nick/syncthing";
+  configDir = "/home/nick/.config/syncthing";
+
+  openDefaultPorts = true;
+
+  settings = {
+    gui.address = "127.0.0.1:8384";
+
+    options = {
+      localAnnounceEnabled = true;   # LAN
+      natEnabled = false;
+      relaysEnabled = false;
+      globalAnnounceEnabled = false;
+      stunEnabled = false;
+    };
+  };
+};
+
+
 }
