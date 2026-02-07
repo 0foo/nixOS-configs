@@ -138,6 +138,8 @@ virtualisation.docker = {
         (builtins.readFile ./files/openconnect/vpn-on))
         (pkgs.writeShellScriptBin "vpn-off"
         (builtins.readFile ./files/openconnect/vpn-off))
+	sqlcmd
+        google-chrome
   ];
   services.transmission.enable = true;
   services.tailscale.enable = false;
