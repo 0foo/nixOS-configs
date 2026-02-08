@@ -25,6 +25,7 @@
     libreoffice
     python3
     cook-cli
+    zip
   ];
 
 
