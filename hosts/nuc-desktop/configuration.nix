@@ -103,6 +103,11 @@
     extraGroups = [ "data" ];
     home = "/var/lib/data";
     createHome = true;
+    uid = 1001;
+  };
+
+  users.groups.data = {
+    gid = 1001;            # <-- ALSO pin the group
   };
 
   # Allow unfree packages
