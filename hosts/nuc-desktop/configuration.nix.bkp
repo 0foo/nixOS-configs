@@ -220,4 +220,33 @@
   programs.virt-manager.enable = true;
 
 
+services.syncthing = {
+  enable = true;
+  user = "data";
+  group = "data";
+
+  dataDir = "/data/syncthing";
+  configDir = "/data/syncthing/.config/syncthing";
+
+  openDefaultPorts = true;
+
+  settings = {
+    gui = {
+      address = "127.0.0.1:8384";
+    };
+
+    options = {
+      # Allow LAN discovery
+      localAnnounceEnabled = true;
+
+      # Allow direct connections (LAN + Tailscale)
+      natEnabled = false;          # no UPnP / NAT-PMP
+      relaysEnabled = false;       # no public relays
+      globalAnnounceEnabled = false;
+
+      # Tailscale doesn't need STUN
+      stunEnabled = false;
+    };
+  };
+};
 }
