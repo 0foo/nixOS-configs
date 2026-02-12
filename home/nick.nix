@@ -36,7 +36,8 @@
   programs.home-manager.enable = true;
   programs.firefox.enable = true;
 
-  # Hide the duplicate AppStream desktop ID GNOME sometimes surfaces
+  
+# Hide the duplicate AppStream desktop ID GNOME sometimes surfaces
   xdg.dataFile."applications/com.google.Chrome.desktop".text = ''
     [Desktop Entry]
     Type=Application
