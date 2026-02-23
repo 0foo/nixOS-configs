@@ -26,6 +26,7 @@
     python3
     cook-cli
     zip
+    unzip
   ];
 
 
