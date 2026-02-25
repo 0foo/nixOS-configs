@@ -100,11 +100,22 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+
 virtualisation.docker = {
   enable = true;
-
   daemon.settings = {
+    # This changes the default docker0 bridge IP
+    bip = "10.200.0.1/24";
     "insecure-registries" = [ "nuc-desktop:5000" ];
+ 
+    # This ensures any new networks (like docker-compose) 
+    # use a safe range instead of the 172.17.x.x range.
+    default-address-pools = [
+      {
+        base = "10.201.0.0/16";
+        size = 24;
+      }
+    ];
   };
 };
  
@@ -137,6 +148,7 @@ virtualisation.docker = {
   	openconnect
   	openconnect_openssl
   	gpclient
+	pay-respects
 	(pkgs.writeShellScriptBin "vpn-on"
         (builtins.readFile ./files/openconnect/vpn-on))
         (pkgs.writeShellScriptBin "vpn-off"
@@ -147,6 +159,10 @@ virtualisation.docker = {
   services.transmission.enable = true;
   services.tailscale.enable = true;
 
+  programs.bash.interactiveShellInit = ''
+    eval "$(pay-respects bash)"
+    alias fuck='pay-respects'
+  '';
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -246,6 +262,22 @@ programs.virt-manager.enable = true;
 
 
   services.avahi.enable = false;
+
+## syncthing
+services.syncthing = {
+  enable = true;
+
+  user = "nick";
+  group = "users";
+
+  dataDir = "/home/nick/syncthing";
+  configDir = "/home/nick/.config/syncthing";
+
+  openDefaultPorts = true;
+
+  # set GUI bind without triggering the merge helper
+  guiAddress = "127.0.0.1:8384";
+};
 
 
 }

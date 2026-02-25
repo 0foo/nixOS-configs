@@ -27,6 +27,7 @@
     cook-cli
     zip
     unzip
+    nmap
   ];
 
 
