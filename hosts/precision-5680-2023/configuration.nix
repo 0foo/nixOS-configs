@@ -155,6 +155,7 @@ virtualisation.docker = {
         (builtins.readFile ./files/openconnect/vpn-off))
 	sqlcmd
         google-chrome
+        pgloader
   ];
   services.transmission.enable = true;
   services.tailscale.enable = true;

@@ -28,6 +28,8 @@
     zip
     unzip
     nmap
+    nb # notetaking
+    skate # a key/value store, also good for note taking
   ];
 
 
