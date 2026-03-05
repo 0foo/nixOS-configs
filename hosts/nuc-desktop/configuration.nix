@@ -3,7 +3,7 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../common/shared.nix
+    ../../common/shared.nix
   ];
 
   boot.initrd.luks.devices."luks-416c1806-20a2-40f9-ae08-a7ee3b7f86a3".device = "/dev/disk/by-uuid/416c1806-20a2-40f9-ae08-a7ee3b7f86a3";

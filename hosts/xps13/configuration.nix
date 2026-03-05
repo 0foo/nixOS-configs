@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ../common/shared.nix
+    ../../common/shared.nix
   ];
 
   boot.loader.timeout = 0;
