@@ -17,6 +17,7 @@
     mkHost = hostName: nixpkgs.lib.nixosSystem {
       inherit system;
       modules = [
+        ./common/shared.nix
         ./hosts/${hostName}/configuration.nix
         ./hosts/${hostName}/hardware-configuration.nix
 
