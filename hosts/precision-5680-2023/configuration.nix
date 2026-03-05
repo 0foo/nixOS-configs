@@ -155,7 +155,8 @@ virtualisation.docker = {
         (builtins.readFile ./files/openconnect/vpn-off))
 	sqlcmd
         google-chrome
-        pgloader
+        pgloader # migrate db to postgres
+	freetds  # required by pgloader
   ];
   services.transmission.enable = true;
   services.tailscale.enable = true;
