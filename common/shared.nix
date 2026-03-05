@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   boot.loader.systemd-boot.enable = true;
@@ -65,4 +65,16 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   system.stateVersion = "25.11";
+
+
+programs.dconf.profiles.user.databases = [
+  {
+    settings = {
+      "org/gnome/shell/extensions/wsmatrix" = {
+        num-rows = pkgs.lib.gvariant.mkInt32 4;
+        num-columns = pkgs.lib.gvariant.mkInt32 4;
+      };
+    };
+  }
+];
 }
