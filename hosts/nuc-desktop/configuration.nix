@@ -1,99 +1,26 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
-
-
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  imports = [
+    ./hardware-configuration.nix
+    ../common/shared.nix
+  ];
 
   boot.initrd.luks.devices."luks-416c1806-20a2-40f9-ae08-a7ee3b7f86a3".device = "/dev/disk/by-uuid/416c1806-20a2-40f9-ae08-a7ee3b7f86a3";
-  networking.hostName = "nuc-desktop"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.hostName = "nuc-desktop";
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
-  networking.networkmanager.enable = true;
-
-  # Set your time zone.
-  time.timeZone = "America/Chicago";
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "en_US.UTF-8";
-    LC_IDENTIFICATION = "en_US.UTF-8";
-    LC_MEASUREMENT = "en_US.UTF-8";
-    LC_MONETARY = "en_US.UTF-8";
-    LC_NAME = "en_US.UTF-8";
-    LC_NUMERIC = "en_US.UTF-8";
-    LC_PAPER = "en_US.UTF-8";
-    LC_TELEPHONE = "en_US.UTF-8";
-    LC_TIME = "en_US.UTF-8";
-  };
-
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
   services.xserver.displayManager.gdm.wayland = true;
 
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
-  # Enable sound with pipewire.
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
-  };
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
   users.groups.data = {
-      members = [ "nick" "data" ];
+    gid = 987;
+    members = [ "nick" "data" ];
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.nick = {
-    isNormalUser = true;
-    description = "nick";
-    extraGroups = [ "networkmanager" "wheel" "docker" "data" "libvertd" "kvm" ];
+    extraGroups = [ "data" "libvertd" "kvm" ];
     openssh.authorizedKeys.keys = [
-	"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP0BBVKhFXsgGVjUGaxNjLNMiARvGV8SW3davx3I1vEb 0foo@xps13"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP0BBVKhFXsgGVjUGaxNjLNMiARvGV8SW3davx3I1vEb 0foo@xps13"
     ];
-	
   };
 
   users.users.data = {
@@ -106,83 +33,26 @@
     uid = 1001;
   };
 
-  users.groups.data = {
-    gid = 987;            # <-- ALSO pin the group
-  };
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  programs.firefox.enable = false;
-
   environment.systemPackages = with pkgs; [
-    git
-    tree
-    tcpdump
-    rclone
-    ansible
-    home-manager
     net-tools
     htop
     freerdp
     openssl
     gnome-remote-desktop  
     google-chrome
-];
+  ];
 
+  services.tailscale.openFirewall = true;
 
-
-  virtualisation.docker.enable = true;
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-  services.tailscale = {
-    enable = true;
-    openFirewall = true;   # opens UDP 41641
-  };
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.11"; # Did you read the comment?
-
-
-  # 9000 9443 are portainer
-  # 2283 is immich
   networking.firewall.allowedTCPPorts = [ 9000 9443 2283 80 22 ];
 
-
-  #-------------------------DISABLE SLEEP ---------------------------------------
   services.logind = {
     lidSwitch = "ignore";
     lidSwitchDocked = "ignore";
     lidSwitchExternalPower = "ignore";
-
     settings = {
       Login = {
         IdleAction = "ignore";
-        # optional: also ensure no idle timeout is set
         IdleActionSec = "0";
         HandlePowerKey = "ignore";
         HandleSuspendKey = "ignore";
@@ -193,22 +63,21 @@
       };
     };
   };
+
   systemd.targets.sleep.enable = false;
   systemd.targets.suspend.enable = false;
   systemd.targets.hibernate.enable = false;
   systemd.targets.hybrid-sleep.enable = false;
+  
   services.gnome.core-utilities.enable = true;
   environment.variables = {
     GSETTINGS_BACKEND = "dconf";
   };
-  #------------------------ END DISABLE SLEEP SECTION -------------------------------------
- 
- services.openssh = {
-    enable = true;
 
-    # Recommended hardening
+  services.openssh = {
+    enable = true;
     settings = {
-      PasswordAuthentication = false;  # use SSH keys
+      PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
       PermitRootLogin = "yes";
     };
@@ -216,8 +85,5 @@
 
   virtualisation.libvirtd.enable = true;
   virtualisation.spiceUSBRedirection.enable = true;
-
   programs.virt-manager.enable = true;
-
-
 }

@@ -1,229 +1,91 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    ./hardware-configuration.nix
+    ../common/shared.nix
+  ];
 
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-
-  networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "nixos";
   networking.firewall.checkReversePath = "loose";
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
-  networking.networkmanager.enable = true;
-  
   services.resolved.enable = true;
   networking.useHostResolvConf = false;
   networking.networkmanager.dns = "systemd-resolved";
 
-  # Set your time zone.
-  time.timeZone = "America/Chicago";
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "en_US.UTF-8";
-    LC_IDENTIFICATION = "en_US.UTF-8";
-    LC_MEASUREMENT = "en_US.UTF-8";
-    LC_MONETARY = "en_US.UTF-8";
-    LC_NAME = "en_US.UTF-8";
-    LC_NUMERIC = "en_US.UTF-8";
-    LC_PAPER = "en_US.UTF-8";
-    LC_TELEPHONE = "en_US.UTF-8";
-    LC_TIME = "en_US.UTF-8";
-  };
-
   environment.sessionVariables.LC_TIME = "en_US.UTF-8";
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
-  # Enable sound with pipewire.
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
   security.sudo.wheelNeedsPassword = false;
 
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
-  };
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.nick = {
-    isNormalUser = true;
-    description = "nick";
-    extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd" "kvm" ];
-    packages = with pkgs; [
-    #  thunderbird
-    ];
+    extraGroups = [ "libvirtd" "kvm" ];
+    packages = with pkgs; [ ];
   };
 
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-
-virtualisation.docker = {
-  enable = true;
-  daemon.settings = {
-    # This changes the default docker0 bridge IP
-    bip = "10.200.0.1/24";
-    "insecure-registries" = [ "nuc-desktop:5000" ];
- 
-    # This ensures any new networks (like docker-compose) 
-    # use a safe range instead of the 172.17.x.x range.
-    default-address-pools = [
-      {
-        base = "10.201.0.0/16";
-        size = 24;
-      }
-    ];
+  virtualisation.docker = {
+    daemon.settings = {
+      bip = "10.200.0.1/24";
+      "insecure-registries" = [ "nuc-desktop:5000" ];
+      default-address-pools = [
+        {
+          base = "10.201.0.0/16";
+          size = 24;
+        }
+      ];
+    };
   };
-};
- 
 
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
   environment.systemPackages = with pkgs; [
-	parted
-	lsof
-	vscode
-	jetbrains.idea-ultimate
-	jetbrains.datagrip
-	tree
-	openconnect
-	spotify
-	htop
-	gthumb
-	teams-for-linux
-  	zoom-us
-    	gnome-control-center
-    	gnome-terminal
-    	nautilus
-    	gnome-system-monitor
-	ansible
-	nettools
-	transmission_4-gtk
-	virt-manager
-  	virt-viewer
-  	openconnect
-  	openconnect_openssl
-  	gpclient
-	pay-respects
-	(pkgs.writeShellScriptBin "vpn-on"
-        (builtins.readFile ./files/openconnect/vpn-on))
-        (pkgs.writeShellScriptBin "vpn-off"
-        (builtins.readFile ./files/openconnect/vpn-off))
-	sqlcmd
-        google-chrome
-        pgloader # migrate db to postgres
-	freetds  # required by pgloader
+    parted
+    lsof
+    vscode
+    jetbrains.idea-ultimate
+    jetbrains.datagrip
+    openconnect
+    spotify
+    htop
+    gthumb
+    teams-for-linux
+    zoom-us
+    gnome-control-center
+    gnome-terminal
+    nautilus
+    gnome-system-monitor
+    nettools
+    transmission_4-gtk
+    virt-manager
+    virt-viewer
+    openconnect_openssl
+    gpclient
+    pay-respects
+    (pkgs.writeShellScriptBin "vpn-on" (builtins.readFile ./files/openconnect/vpn-on))
+    (pkgs.writeShellScriptBin "vpn-off" (builtins.readFile ./files/openconnect/vpn-off))
+    sqlcmd
+    google-chrome
+    pgloader
+    freetds
   ];
+
   services.transmission.enable = true;
-  services.tailscale.enable = true;
 
   programs.bash.interactiveShellInit = ''
     eval "$(pay-respects bash)"
     alias fuck='pay-respects'
   '';
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
 
-  # List services that you want to enable:
+  services.dbus.enable = true;
+  programs.nix-ld.enable = true;
 
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  fonts.fontconfig.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  services.nscd.enable = true;
+  services.nscd.config = ''
+    enable-cache hosts yes
+    positive-time-to-live hosts 3600
+    negative-time-to-live hosts 20
+  '';
 
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.11"; # Did you read the comment?
-
-
-  ############################
-  services.dbus.enable = true;          # DBus for faster app communication
-programs.nix-ld.enable = true;
-
-#  environment.variables.GTK_USE_PORTAL = "0";
-
-#  nix.settings = {
-#    max-jobs = "auto";                  # Use all CPU cores for builds
-#    cores = 0;
-#    download-buffer-size = 536870912;   # 512 MB buffer for faster downloads
-#    substituters = [ "https://cache.nixos.org/" ];
-#    trusted-public-keys = [ "cache.nixos.org-1:6N9wD0..." ];
-#  };
-
-fonts.fontconfig.enable = true;
-# fonts.fontconfig.cache.enable = true;
-# services.dbus.enable = true;
-# services.dbus.packages = [ pkgs.dconf pkgs.gcr pkgs.gnome-keyring ];
-
-services.nscd.enable = true;
-services.nscd.config = ''
-  enable-cache hosts yes
-  positive-time-to-live hosts 3600
-  negative-time-to-live hosts 20
-'';
-
-powerManagement.cpuFreqGovernor = "performance";
-
-nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  services.desktopManager.gnome.enable = true;
-  services.displayManager.gdm.enable = true;
+  powerManagement.cpuFreqGovernor = "performance";
 
   programs.dconf.enable = true;
 
@@ -241,12 +103,9 @@ nix.settings.experimental-features = [ "nix-command" "flakes" ];
     };
   };
 
-## enable kvm
-virtualisation.libvirtd.enable = true;
-programs.virt-manager.enable = true;
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
 
-
-## Tulane VPN files 
   environment.etc."openconnect/hipreport.sh" = {
     source = ./files/openconnect/hipreport.sh;
     mode = "0755";
@@ -262,24 +121,15 @@ programs.virt-manager.enable = true;
     mode = "0755";
   };
 
-
   services.avahi.enable = false;
 
-## syncthing
-services.syncthing = {
-  enable = true;
-
-  user = "nick";
-  group = "users";
-
-  dataDir = "/home/nick/syncthing";
-  configDir = "/home/nick/.config/syncthing";
-
-  openDefaultPorts = true;
-
-  # set GUI bind without triggering the merge helper
-  guiAddress = "127.0.0.1:8384";
-};
-
-
+  services.syncthing = {
+    enable = true;
+    user = "nick";
+    group = "users";
+    dataDir = "/home/nick/syncthing";
+    configDir = "/home/nick/.config/syncthing";
+    openDefaultPorts = true;
+    guiAddress = "127.0.0.1:8384";
+  };
 }
