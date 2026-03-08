@@ -6,7 +6,7 @@
     ../../common/shared.nix
   ];
 
-  networking.hostName = "nixos";
+  networking.hostName = "precision-5680-2023";
   networking.firewall.checkReversePath = "loose";
 
   services.resolved.enable = true;
