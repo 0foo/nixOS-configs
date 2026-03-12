@@ -1,4 +1,4 @@
-#!/nix/store/j8645yndikbrvn292zgvyv64xrrmwdcb-bash-5.3p3/bin/sh
+#!/run/current-system/sw/bin/sh
 
 COOKIE=
 IP=

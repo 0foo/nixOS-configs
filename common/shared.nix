@@ -58,6 +58,7 @@
     rclone
     ansible
     home-manager
+    gemini-cli
   ];
 
   virtualisation.docker.enable = true;
