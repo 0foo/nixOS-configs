@@ -64,6 +64,7 @@
     google-chrome
     pgloader
     freetds
+    nomachine-client
   ];
 
   services.transmission.enable = true;
