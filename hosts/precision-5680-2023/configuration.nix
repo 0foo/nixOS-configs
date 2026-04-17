@@ -122,7 +122,7 @@
     mode = "0755";
   };
 
-  services.avahi.enable = false;
+#  services.avahi.enable = false;
 
   services.syncthing = {
     enable = true;
@@ -133,4 +133,16 @@
     openDefaultPorts = true;
     guiAddress = "127.0.0.1:8384";
   };
+
+
+  services.printing.enable = true;
+
+services.avahi = {
+  enable = true;
+  nssmdns4 = true;
+  openFirewall = true;
+};
+
+programs.direnv.enable = true;
+
 }
