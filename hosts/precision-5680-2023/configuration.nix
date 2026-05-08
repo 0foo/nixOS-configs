@@ -65,13 +65,23 @@
     pgloader
     freetds
     nomachine-client
+  # needed for labkey tests
+  xorg.libXext
+  xorg.libXrender
+  xorg.libXtst
+  xorg.libXi
+  xorg.libX11
+  libGL
+  stdenv.cc.cc
+  # end labkey test packages
+
   ];
+
 
   services.transmission.enable = true;
 
   programs.bash.interactiveShellInit = ''
-    eval "$(pay-respects bash)"
-    alias fuck='pay-respects'
+    eval "$(direnv hook bash)"
   '';
 
   services.dbus.enable = true;
@@ -144,5 +154,4 @@ services.avahi = {
 };
 
 programs.direnv.enable = true;
-
 }
