@@ -6,6 +6,7 @@
     ../../common/shared.nix
   ];
 
+  services.flatpak.enable = true;
   networking.hostName = "precision-5680-2023";
   networking.firewall.checkReversePath = "loose";
 
