@@ -75,7 +75,8 @@
   libGL
   stdenv.cc.cc
   # end labkey test packages
-
+  python3
+  python3Packages.pip
   ];
 
 
