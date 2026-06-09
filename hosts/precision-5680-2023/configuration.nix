@@ -40,7 +40,7 @@
     parted
     lsof
     vscode
-    jetbrains.idea-ultimate
+    jetbrains.idea
     jetbrains.datagrip
     openconnect
     spotify

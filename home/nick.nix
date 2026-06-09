@@ -41,6 +41,7 @@
 
   programs.home-manager.enable = true;
   programs.firefox.enable = true;
+  programs.firefox.configPath = ".mozilla/firefox";
 
   
 # Hide the duplicate AppStream desktop ID GNOME sometimes surfaces
