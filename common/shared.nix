@@ -5,6 +5,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.networkmanager.enable = true;
+  programs.nix-ld.enable = true;
 
   time.timeZone = "America/Chicago";
 
