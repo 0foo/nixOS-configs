@@ -52,6 +52,7 @@
 
   nixpkgs.config.allowUnfree = true;
 
+
   environment.systemPackages = with pkgs; [
     git
     tree
@@ -60,23 +61,33 @@
     ansible
     home-manager
     gemini-cli
+    gnomeExtensions.workspace-matrix
+    docker-compose
   ];
 
   virtualisation.docker.enable = true;
   services.tailscale.enable = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  system.stateVersion = "25.11";
+  system.stateVersion = "26.05";
 
 
-programs.dconf.profiles.user.databases = [
-  {
-    settings = {
-      "org/gnome/shell/extensions/wsmatrix" = {
-        num-rows = pkgs.lib.gvariant.mkInt32 4;
-        num-columns = pkgs.lib.gvariant.mkInt32 4;
+  programs.dconf.enable = true;
+  programs.dconf.profiles.user.databases = [
+    {
+      settings = {
+        # Tell GNOME Shell to turn the extension ON
+        "org/gnome/shell" = {
+          enabled-extensions = [ "wsmatrix@martin.zurowietz.de" ];
+        };
+
+        # Your custom grid configuration
+        "org/gnome/shell/extensions/wsmatrix" = {
+          num-rows = lib.gvariant.mkInt32 4;
+          num-columns = lib.gvariant.mkInt32 4;
+        };
       };
-    };
-  }
-];
+    }
+  ];
+
 }
