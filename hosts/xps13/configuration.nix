@@ -25,6 +25,7 @@
     gpauth
     transmission_4-gtk
     net-tools
+    android-tools
   ];
 
   services.transmission.enable = true;
