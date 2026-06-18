@@ -6,17 +6,34 @@
     ../../common/shared.nix
   ];
 
+
   services.flatpak.enable = true;
   networking.hostName = "precision-5680-2023";
   networking.firewall.checkReversePath = "loose";
 
-  services.resolved.enable = true;
+  services.udev.packages = with pkgs; [ gnome-settings-daemon ];
+
   networking.useHostResolvConf = false;
   networking.networkmanager.dns = "systemd-resolved";
 
+services.resolved = {
+    enable = true;
+    settings = {
+      Resolve = {
+        DNS = "";
+        FallbackDNS = "1.1.1.1 8.8.8.8";
+      };
+    };
+  };
   environment.sessionVariables.LC_TIME = "en_US.UTF-8";
 
   security.sudo.wheelNeedsPassword = false;
+
+  virtualisation.podman = {
+    enable = true;
+    # Disable compatibility to prevent socket and alias collisions with real Docker
+    dockerCompat = false;
+  };
 
   users.users.nick = {
     extraGroups = [ "libvirtd" "kvm" ];
@@ -57,7 +74,6 @@
     virt-manager
     virt-viewer
     openconnect_openssl
-    gpclient
     pay-respects
     (pkgs.writeShellScriptBin "vpn-on" (builtins.readFile ./files/openconnect/vpn-on))
     (pkgs.writeShellScriptBin "vpn-off" (builtins.readFile ./files/openconnect/vpn-off))
@@ -77,7 +93,12 @@
   # end labkey test packages
   python3
   python3Packages.pip
-  ];
+  # Tulane VPN
+  gp-saml-gui
+  gpclient
+  gnomeExtensions.appindicator
+  distrobox 
+ ];
 
 
   services.transmission.enable = true;

@@ -1,5 +1,10 @@
 #!/run/current-system/sw/bin/sh
 
+exec 2>> /tmp/hip_debug.log
+echo "--- Script Triggered at $(date) ---" >> /tmp/hip_debug.log
+echo "Arguments: $@" >> /tmp/hip_debug.log
+echo "Environment: $(env)" >> /tmp/hip_debug.log
+
 COOKIE=
 IP=
 IPV6=

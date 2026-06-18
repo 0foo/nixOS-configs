@@ -66,6 +66,7 @@ time.timeZone = "America/Chicago";
     gemini-cli
     gnomeExtensions.workspace-matrix
     docker-compose
+    openssl
   ];
 
   virtualisation.docker.enable = true;
