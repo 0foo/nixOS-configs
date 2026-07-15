@@ -33,11 +33,32 @@
 
 services.xserver.videoDrivers = [ "nvidia" ];
 
-hardware.nvidia = {
-  open = true;              # change to false if older GPU
-  modesetting.enable = true;
-  nvidiaSettings = true;
+# Add this block to declare hardware graphics drivers
+hardware.graphics = {
+  enable = true;
+  extraPackages = with pkgs; [
+    intel-media-driver      # VA-API driver for Intel Iris Xe graphics
+    nvidia-vaapi-driver     # Direct VA-API translation layer for Nvidia GPUs
+    libvdpau-va-gl          # VDPAU driver wrapper
+  ];
 };
 
+hardware.nvidia = {
+  open = true;
+  modesetting.enable = true;
+  nvidiaSettings = true;
+  
+  # Configure proper dual-GPU mapping for the Precision 5680
+  prime = {
+    # Enables hybrid offloading
+    offload = {
+      enable = true;
+      enableOffloadCmd = true;
+    };
+    # PCI Bus IDs for the Raptor Lake-P generation architecture
+    intelBusId = "PCI:0:2:0";
+    nvidiaBusId = "PCI:1:0:0";
+  };
+};
 
 }

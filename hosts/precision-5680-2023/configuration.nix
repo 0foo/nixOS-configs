@@ -10,7 +10,9 @@
   services.flatpak.enable = true;
   networking.hostName = "precision-5680-2023";
   networking.firewall.checkReversePath = "loose";
-
+  networking.firewall.trustedInterfaces = [ "virbr0" ];
+#  networking.mdns = true;
+  
   services.udev.packages = with pkgs; [ gnome-settings-daemon ];
 
   networking.useHostResolvConf = false;
@@ -21,11 +23,16 @@ services.resolved = {
     settings = {
       Resolve = {
         DNS = "";
-        FallbackDNS = "1.1.1.1 8.8.8.8";
+        FallbackDNS = "1.1.1.1";
       };
     };
   };
-  environment.sessionVariables.LC_TIME = "en_US.UTF-8";
+
+environment.sessionVariables = {
+  LC_TIME = "en_US.UTF-8";
+  MOZ_DISABLE_RDD_SANDBOX = "1";
+  NVD_BACKEND = "direct";
+};
 
   security.sudo.wheelNeedsPassword = false;
 
@@ -75,8 +82,6 @@ services.resolved = {
     virt-viewer
     openconnect_openssl
     pay-respects
-    (pkgs.writeShellScriptBin "vpn-on" (builtins.readFile ./files/openconnect/vpn-on))
-    (pkgs.writeShellScriptBin "vpn-off" (builtins.readFile ./files/openconnect/vpn-off))
     sqlcmd
     google-chrome
     pgloader
@@ -140,22 +145,6 @@ services.resolved = {
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
 
-  environment.etc."openconnect/hipreport.sh" = {
-    source = ./files/openconnect/hipreport.sh;
-    mode = "0755";
-  };
-
-  environment.etc."openconnect/vpn-on" = {
-    source = ./files/openconnect/vpn-on;
-    mode = "0755";
-  };
-
-  environment.etc."openconnect/vpn-off" = {
-    source = ./files/openconnect/vpn-off;
-    mode = "0755";
-  };
-
-#  services.avahi.enable = false;
 
   services.syncthing = {
     enable = true;

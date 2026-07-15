@@ -67,6 +67,7 @@ time.timeZone = "America/Chicago";
     gnomeExtensions.workspace-matrix
     docker-compose
     openssl
+    bind
   ];
 
   virtualisation.docker.enable = true;
