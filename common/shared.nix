@@ -68,6 +68,20 @@ time.timeZone = "America/Chicago";
     docker-compose
     openssl
     bind
+    speedtest-cli
+    unzip
+    p7zip        # provides 7z
+    unar         # rar/other formats, free alternative to unrar
+    gnutar
+    gzip
+    bzip2
+    xz
+    zstd
+    file
+    fclones
+    rsync
+    tmux
+    tree
   ];
 
   virtualisation.docker.enable = true;

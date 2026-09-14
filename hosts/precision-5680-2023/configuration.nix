@@ -6,11 +6,23 @@
     ../../common/shared.nix
   ];
 
+  services.printing = {
+    enable = true;
+    drivers = [ pkgs.hplipWithPlugin ];
+  };
+
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
+    };
+  };
 
   services.flatpak.enable = true;
   networking.hostName = "precision-5680-2023";
   networking.firewall.checkReversePath = "loose";
-  networking.firewall.trustedInterfaces = [ "virbr0" ];
+  networking.firewall.trustedInterfaces = [ "virbr0" "tailscale0" ];
 #  networking.mdns = true;
   
   services.udev.packages = with pkgs; [ gnome-settings-daemon ];
@@ -86,15 +98,18 @@ environment.sessionVariables = {
     google-chrome
     pgloader
     freetds
-    nomachine-client
+#    nomachine-client
+    slack
+
   # needed for labkey tests
-  xorg.libXext
-  xorg.libXrender
-  xorg.libXtst
-  xorg.libXi
-  xorg.libX11
   libGL
   stdenv.cc.cc
+  libxext
+  libxrender
+  libxtst
+  libxi
+  libx11
+
   # end labkey test packages
   python3
   python3Packages.pip
@@ -103,8 +118,13 @@ environment.sessionVariables = {
   gpclient
   gnomeExtensions.appindicator
   distrobox 
- ];
+  git-lfs
+  # claude code
+  claude-code
+  fclones
+  samba
 
+ ];
 
   services.transmission.enable = true;
 
@@ -156,8 +176,6 @@ environment.sessionVariables = {
     guiAddress = "127.0.0.1:8384";
   };
 
-
-  services.printing.enable = true;
 
 services.avahi = {
   enable = true;
