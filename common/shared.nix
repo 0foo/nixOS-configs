@@ -51,9 +51,15 @@ time.timeZone = "America/Chicago";
     extraGroups = [ "networkmanager" "wheel" "docker" ];
   };
 
+
+
+
   programs.firefox.enable = false;
 
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+    allowInsecurePredicate = _: true;
+  };
 
 
   environment.systemPackages = with pkgs; [
@@ -82,6 +88,7 @@ time.timeZone = "America/Chicago";
     rsync
     tmux
     tree
+    sublime4
   ];
 
   virtualisation.docker.enable = true;

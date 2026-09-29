@@ -1,10 +1,28 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports = [
     ./hardware-configuration.nix
     ../../common/shared.nix
   ];
+
+
+services.gnome.gnome-remote-desktop.enable = true;
+
+nixpkgs.config.allowUnfreePredicate = pkg:
+  builtins.elem (lib.getName pkg) [ "ngrok" ];
+
+# environment.systemPackages = [ pkgs.ngrok ];
+
+  programs.dconf.profiles.user.databases = [
+    {
+      settings."org/gnome/desktop/session" = {
+        idle-delay = lib.gvariant.mkUint32 3600;
+      };
+    }
+  ];
+
+  programs.dconf.enable = true;
 
   services.printing = {
     enable = true;
@@ -18,6 +36,18 @@
       KbdInteractiveAuthentication = false;
     };
   };
+
+
+
+  programs.obs-studio = {
+    enable = true;
+    plugins = with pkgs.obs-studio-plugins; [
+      wlrobs
+      obs-backgroundremoval
+      obs-pipewire-audio-capture
+    ];
+  };
+
 
   services.flatpak.enable = true;
   networking.hostName = "precision-5680-2023";
@@ -123,7 +153,8 @@ environment.sessionVariables = {
   claude-code
   fclones
   samba
-
+  pkgs.ngrok
+  paraview
  ];
 
   services.transmission.enable = true;
@@ -145,8 +176,6 @@ environment.sessionVariables = {
   '';
 
   powerManagement.cpuFreqGovernor = "performance";
-
-  programs.dconf.enable = true;
 
   system.activationScripts.gnomeClock12h.text = ''
     /run/current-system/sw/bin/gsettings set org.gnome.desktop.interface clock-format '12h' || true
