@@ -1,0 +1,52 @@
+--- a/gp_saml_gui.py
++++ b/gp_saml_gui.py
+@@ -35,7 +35,7 @@
+ from shlex import quote
+ from sys import stderr, platform
+ from binascii import a2b_base64, b2a_base64
+-from urllib.parse import urlparse, urlencode, urlunsplit
++from urllib.parse import urlparse, urlencode, parse_qsl, urlunsplit
+ from html.parser import HTMLParser
+ 
+ 
+@@ -144,6 +144,22 @@
+         origin = '%s %s' % ('🔒' if urip.scheme == 'https' else '🔴', urip.netloc)
+         self.window.set_title("SAML Login (%s)" % origin)
+ 
++        # Palo Alto's Cloud Authentication Service (CAS) does not finish by
++        # returning cookie headers. It navigates to a custom-scheme URL:
++        #   globalprotectcallback:cas-as=1&un=<user>&token=<JWT>
++        # There is no HTTP response behind that, so this has to be handled
++        # before the rs/headers check below, which would otherwise bail out.
++        # The JWT goes on to become the `token` form field of login.esp.
++        if urip.scheme == 'globalprotectcallback':
++            cas = dict(parse_qsl(uri.split(':', 1)[1]))
++            if 'un' in cas and 'token' in cas:
++                if self.verbose:
++                    print("[SAML   ] Got CAS callback for user %s" % cas['un'], file=stderr)
++                self.saml_result.update({'saml-username': cas['un'],
++                                         'token': cas['token']})
++                self.check_done()
++                return
++
+         # if no response or no headers (for e.g. about:blank), skip checking this
+         if not rs or not h:
+             return
+@@ -204,7 +220,7 @@
+ 
+     def check_done(self):
+         d = self.saml_result
+-        if 'saml-username' in d and ('prelogin-cookie' in d or 'portal-userauthcookie' in d):
++        if 'saml-username' in d and ('prelogin-cookie' in d or 'portal-userauthcookie' in d or 'token' in d):
+             if self.verbose:
+                 print("[SAML   ] Got all required SAML headers, done.", file=stderr)
+             self.success = True
+@@ -402,7 +418,7 @@
+     un = slv.saml_result.get('saml-username')
+     server = slv.saml_result.get('server', args.server)
+ 
+-    for cn, ifh in (('prelogin-cookie','gateway'), ('portal-userauthcookie','portal')):
++    for cn, ifh in (('prelogin-cookie','gateway'), ('portal-userauthcookie','portal'), ('token','gateway')):
+         cv = slv.saml_result.get(cn)
+         if cv:
+             break

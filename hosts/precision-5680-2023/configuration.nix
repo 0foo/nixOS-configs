@@ -155,6 +155,7 @@ environment.sessionVariables = {
   samba
   pkgs.ngrok
   paraview
+  azure-cli
  ];
 
   services.transmission.enable = true;

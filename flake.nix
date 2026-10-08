@@ -18,6 +18,7 @@
       inherit system;
       modules = [
         ./common/shared.nix
+        ./common/vpn-globalprotect.nix
         ./hosts/${hostName}/configuration.nix
         ./hosts/${hostName}/hardware-configuration.nix
 

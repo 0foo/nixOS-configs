@@ -89,6 +89,7 @@ time.timeZone = "America/Chicago";
     tmux
     tree
     sublime4
+    obs-studio 
   ];
 
   virtualisation.docker.enable = true;
