@@ -60,6 +60,40 @@ nixpkgs.config.allowUnfreePredicate = pkg:
   networking.useHostResolvConf = false;
   networking.networkmanager.dns = "systemd-resolved";
 
+  # Search the tailnet before the AT&T gateway domain. Bare names like "mother"
+  # otherwise resolve via attlocal.net to LAN/public-IPv6 addresses where
+  # tailnet-only services are not bound, which hangs rather than fails.
+  networking.search = [ "tail776145.ts.net" ];
+
+  # Bare hostnames must expand against the tailnet, not the AT&T gateway's
+  # attlocal.net. nsswitch uses nss-resolve, so systemd-resolved performs its
+  # own search expansion and the search order in resolv.conf is ignored -- and
+  # a per-link search domain always beats the global one. So demote the
+  # DHCP-supplied attlocal.net to a routing-only domain ("~" prefix): names
+  # under it still resolve via the gateway, but it no longer competes to
+  # expand bare names like "mother", which would otherwise land on LAN or
+  # public-IPv6 addresses where tailnet-only services are not bound.
+  networking.networkmanager.dispatcherScripts = [
+    {
+      type = "basic";
+      source = pkgs.writeShellScript "tailnet-search-first" ''
+        iface="$1"
+        action="$2"
+        case "$action" in
+          up|dhcp4-change|dhcp6-change) ;;
+          *) exit 0 ;;
+        esac
+        if [ "$iface" = "tailscale0" ]; then exit 0; fi
+        doms=$(${pkgs.systemd}/bin/resolvectl domain "$iface" 2>/dev/null)
+        # Only act while it is still a search domain (no "~" prefix).
+        case "$doms" in
+          *"~attlocal.net"*) exit 0 ;;
+          *attlocal.net*) ${pkgs.systemd}/bin/resolvectl domain "$iface" "~attlocal.net" ;;
+        esac
+      '';
+    }
+  ];
+
 services.resolved = {
     enable = true;
     settings = {
