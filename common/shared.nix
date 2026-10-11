@@ -34,7 +34,8 @@ time.timeZone = "America/Chicago";
     variant = "";
   };
 
-  services.printing.enable = true;
+  # CUPS printing (disabled 2026-10-11)
+  # services.printing.enable = true;
 
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;

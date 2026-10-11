@@ -24,10 +24,11 @@ nixpkgs.config.allowUnfreePredicate = pkg:
 
   programs.dconf.enable = true;
 
-  services.printing = {
-    enable = true;
-    drivers = [ pkgs.hplipWithPlugin ];
-  };
+  # CUPS printing with HP drivers (disabled 2026-10-11)
+  # services.printing = {
+  #   enable = true;
+  #   drivers = [ pkgs.hplipWithPlugin ];
+  # };
 
   services.openssh = {
     enable = true;
