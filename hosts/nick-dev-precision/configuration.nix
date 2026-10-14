@@ -51,7 +51,7 @@ nixpkgs.config.allowUnfreePredicate = pkg:
 
 
   services.flatpak.enable = true;
-  networking.hostName = "precision-5680-2023";
+  networking.hostName = "nick-dev-precision";
   networking.firewall.checkReversePath = "loose";
   networking.firewall.trustedInterfaces = [ "virbr0" "tailscale0" ];
 #  networking.mdns = true;
@@ -194,6 +194,110 @@ environment.sessionVariables = {
  ];
 
   services.transmission.enable = true;
+
+  # Tulane's GlobalProtect gateway runs a HIP posture check and puts clients it
+  # considers non-compliant into a restricted policy -- DNS and the portal
+  # reachable, nothing else, which is the "connects but no traffic" symptom.
+  # The HIP report this host sends was accurate on every count except that its
+  # antivirus/anti-spyware/anti-malware lists were empty, because nothing was
+  # installed. This makes that no longer true.
+  #
+  # Whether the gateway's policy accepts ClamAV specifically is unknown --
+  # posture profiles often allowlist particular vendors -- but it is a real
+  # scanner honestly reported, so it is the cheap test before asking Tulane IT
+  # which endpoint agent they actually require.
+  services.clamav = {
+    daemon.enable = true;
+    # freshclam, hourly. Keeps <defver> and its datestamp in the HIP report
+    # current; a stale signature database is itself a posture failure.
+    updater.enable = true;
+    # On-access scanning via fanotify -- this is what makes
+    # <real-time-protection>yes</real-time-protection> a true statement.
+    clamonacc.enable = true;
+    # Scheduled scan, so <last-full-scan-time> is a measured value rather than
+    # "n/a". Weekly, not nightly: the HIP report only needs a recent successful
+    # completion, and the nightly version fired on every morning's resume (a
+    # realtime timer whose time passed during suspend runs when the laptop
+    # wakes), which is what "clamd is eating the machine" actually was.
+    scanner.enable = true;
+    scanner.interval = "Sun *-*-* 04:00:00";
+    # /home as a whole is ~100G of things no scanner should read: 29G of
+    # ~/.cache and 66G of ~/Downloads archives. Scan where fetched content
+    # lands and where the posture check cares, and let ExcludePath below cut
+    # the churn out of the rest.
+    # /tmp and /var/tmp are deliberately absent. They are socket and named-pipe
+    # farms on a live desktop -- X11, Chromium's SingletonSocket, dotnet
+    # diagnostic pipes -- and clamdscan counts every one as "Not supported file
+    # type", an error. Any error at all makes it exit 2, which systemd records
+    # as a failed unit, which makes the HIP probe's `Result = success` test
+    # false and sends <last-full-scan-time>n/a</last-full-scan-time> forever.
+    # A scan that cannot succeed is worse than one with slightly less reach.
+    scanner.scanDirectories = [
+      "/home/nick/Documents"
+      "/home/nick/Desktop"
+      "/home/nick/Downloads"
+      "/etc"
+      "/var/lib"
+    ];
+    daemon.settings = {
+      # Watch the only tree where user-fetched content lands. Scanning the
+      # whole filesystem on access would mean scanning the Nix store, which is
+      # immutable, already content-addressed, and enormous.
+      OnAccessIncludePath = [ "/home" ];
+      # OnAccessExcludeUname is already set to "clamav" by the module itself,
+      # which is what keeps the scanner from scanning its own reads.
+      # Scan on access and alert, but do not block the open() while scanning.
+      # Prevention is the stricter setting and ClamAV calls both "on-access";
+      # it is off here because blocking reads on /home would be felt
+      # immediately by git and node_modules-sized trees. Flip to true if the
+      # gateway turns out to want enforcement.
+      OnAccessPrevention = false;
+      # Default is 12 worker threads, and the scheduled scan runs with
+      # --multiscan, so one scan happily occupies 12 of this box's 20 cores.
+      # Four is still faster than the disk it reads from.
+      MaxThreads = 4;
+      # POSIX regex matched against the path, honoured for both on-access
+      # requests and clamdscan jobs, since --fdpass hands the work to clamd
+      # either way. Build output, caches and VM images are either regenerable,
+      # content-addressed, or far too large to be worth hashing.
+      ExcludePath = [
+        "^/home/[^/]+/\\.cache/"
+        "^/home/[^/]+/\\.local/share/Trash/"
+        "^/home/[^/]+/\\.local/state/"
+        "^/home/[^/]+/\\.mozilla/firefox/[^/]+/(cache2|storage)/"
+        "^/home/[^/]+/syncthing/\\.stversions/"
+        "^/nix/store/"
+        "^/var/lib/(docker|libvirt|containers)/"
+        "/node_modules/"
+        "/\\.git/objects/"
+        "/\\.direnv/"
+        "/(site|dist)-packages/"
+        "/__pycache__/"
+        "/target/(debug|release)/"
+      ];
+    };
+  };
+
+  # Every ClamAV job here is background work with no deadline: the HIP report
+  # asks whether the units are running and whether a scan succeeded, never how
+  # fast. Giving them SCHED_IDLE and idle I/O means a scan that collides with
+  # real work yields instead of competing, and the CPUQuota caps the worst case
+  # even when nothing else is runnable.
+  systemd.services.clamav-daemon.serviceConfig = {
+    Nice = 19;
+    CPUSchedulingPolicy = "idle";
+    IOSchedulingClass = "idle";
+    CPUQuota = "200%";
+  };
+  systemd.services.clamav-clamonacc.serviceConfig = {
+    Nice = 19;
+    IOSchedulingClass = "idle";
+  };
+  systemd.services.clamdscan.serviceConfig = {
+    Nice = 19;
+    CPUSchedulingPolicy = "idle";
+    IOSchedulingClass = "idle";
+  };
 
   programs.bash.interactiveShellInit = ''
     eval "$(direnv hook bash)"
